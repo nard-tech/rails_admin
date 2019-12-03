@@ -22,7 +22,13 @@ module RailsAdmin
             elsif request.put? # UPDATE
               sanitize_params_for!(request.xhr? ? :modal : :update)
 
-              @object.set_attributes(params[@abstract_model.param_key])
+              params_not_related_to_attachments = params[@abstract_model.param_key].except(*@object.attachment_reflections.keys)
+              @object.set_attributes(params_not_related_to_attachments)
+
+              @object.attachment_reflections.keys.each do |key|
+                @object.public_send("#{key}=", (@object.public_send(key).send(:change)&.attachables || @object.public_send(key).blobs) + params[@abstract_model.param_key][key])
+              end
+
               @authorization_adapter && @authorization_adapter.authorize(:update, @abstract_model, @object)
               changes = @object.changes
               if @object.save
