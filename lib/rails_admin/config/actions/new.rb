@@ -33,7 +33,13 @@ module RailsAdmin
               @object = @abstract_model.new
               sanitize_params_for!(request.xhr? ? :modal : :create)
 
-              @object.set_attributes(params[@abstract_model.param_key])
+              params_not_related_to_attachments = params[@abstract_model.param_key].except(*@object.attachment_reflections.keys)
+              @object.set_attributes(params_not_related_to_attachments)
+
+              @object.attachment_reflections.keys.each do |key|
+                @object.public_send("#{key}=", (@object.public_send(key).send(:change)&.attachables || @object.public_send(key).blobs) + params[@abstract_model.param_key][key])
+              end
+
               @authorization_adapter && @authorization_adapter.authorize(:create, @abstract_model, @object)
 
               if @object.save
