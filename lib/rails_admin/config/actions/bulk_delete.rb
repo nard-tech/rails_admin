@@ -23,9 +23,7 @@ module RailsAdmin
               else
                 render @action.template_name
               end
-
             elsif request.delete? # BULK DESTROY
-
               destroyed = nil
               not_destroyed = nil
 

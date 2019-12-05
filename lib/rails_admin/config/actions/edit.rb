@@ -15,12 +15,10 @@ module RailsAdmin
         register_instance_option :controller do
           proc do
             if request.get? # EDIT
-
               respond_to do |format|
                 format.html { render @action.template_name }
                 format.js   { render @action.template_name, layout: false }
               end
-
             elsif request.put? # UPDATE
               sanitize_params_for!(request.xhr? ? :modal : :update)
 
@@ -36,7 +34,6 @@ module RailsAdmin
               else
                 handle_save_error :edit
               end
-
             end
           end
         end

@@ -15,7 +15,6 @@ module RailsAdmin
         register_instance_option :controller do
           proc do
             if request.get? # NEW
-
               @object = @abstract_model.new
               @authorization_adapter && @authorization_adapter.attributes_for(:new, @abstract_model).each do |name, value|
                 @object.send("#{name}=", value)
@@ -30,7 +29,6 @@ module RailsAdmin
               end
 
             elsif request.post? # CREATE
-
               @modified_assoc = []
               @object = @abstract_model.new
               sanitize_params_for!(request.xhr? ? :modal : :create)
